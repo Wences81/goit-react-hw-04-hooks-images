@@ -1,12 +1,11 @@
 import { useEffect, useState } from 'react';
 import toast, { Toaster } from 'react-hot-toast';
-import { fetchPictures } from '../../services/api';
+import { fetchPictures } from '../../services/imagesApi';
 import SearchBar from '../SearchBar/SearchBar';
 import ImageGallery from '../ImageGallery/ImageGallery';
 import Button from '../Button/Button';
 import Loader from '../Loader/Loader';
 import Modal from '../Modal/Modal';
-import './App.module.css';
 
 export default function App() {
   const [pictureName, setPictureName] = useState(null);
@@ -14,15 +13,15 @@ export default function App() {
   const [selectedImg, setSelectedImg] = useState(null);
   const [page, setPage] = useState(1);
   const [showModal, setShowModal] = useState(false);
-  const [loader, setLoader] = useState('false');
+  const [loader, setLoader] = useState(false);
 
   useEffect(() => {
     if (!pictureName) return;
     async function getFetchPictures() {
       try {
-        setLoader('true');
+        setLoader(true);
         const gallery = await fetchPictures(pictureName, page);
-        if (pictureName.trim() === '' || gallery.length === 0) {
+        if (pictureName.trim() === '' || !gallery.length) {
           return toast.error(
             `Sorry, but there are no pictures with  ${pictureName}`,
           );
@@ -36,7 +35,7 @@ export default function App() {
       } catch (error) {
         toast.error('Something went wrong');
       } finally {
-        setLoader('false');
+        setLoader(false);
       }
     }
     getFetchPictures();
@@ -64,8 +63,8 @@ export default function App() {
       <Toaster />
       <SearchBar onSearch={handleFormSubmit} />
       <ImageGallery pictures={pictures} onSelect={handleSelectedImage} />
-      {showButton && <Button onClick={loadMoreButtonClick} />}
-      {loader === 'true' && <Loader />}
+      {showButton && !loader && <Button onClick={loadMoreButtonClick} />}
+      {loader && !showButton && <Loader />}
       {showModal && (
         <Modal
           src={selectedImg}

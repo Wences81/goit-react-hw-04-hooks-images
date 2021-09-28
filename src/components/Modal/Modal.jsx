@@ -2,8 +2,6 @@ import { useEffect } from 'react';
 import PropTypes from 'prop-types';
 import s from './Modal.module.css';
 
-// const modalRoot = document.getElementById('modal-root');
-
 export default function Modal({ src, alt, onSelect }) {
   useEffect(() => {
     window.addEventListener('keydown', handleKeyDown);
